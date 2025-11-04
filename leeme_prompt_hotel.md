@@ -1,542 +1,64 @@
-Crear carpeta del proyecto UIII_Hotel_0743
+# Proyecto Hotel - Django - Guía Completa
 
-Windows / macOS / Linux (terminal):
+Te proporciono una guía completa paso a paso para crear el proyecto Hotel con Django:
 
-# desde la carpeta donde quieras crear el proyecto
+## 1. Estructura inicial del proyecto
+
+### 1.1 Crear carpeta del proyecto
+```bash
 mkdir UIII_Hotel_0743
 cd UIII_Hotel_0743
+```
 
-2. Abrir VS Code sobre la carpeta UIII_Hotel_0743
-
-Desde la misma carpeta en terminal:
-
+### 1.2 Abrir VS Code en la carpeta
+```bash
 code .
+```
 
+### 1.3 Abrir terminal en VS Code
+- `Ctrl + Ñ` (Windows/Linux) o `Cmd + Ñ` (Mac)
+- O menú: View → Terminal
 
-(Esto abre VS Code en la carpeta actual.)
-
-También desde VS Code: File > Open Folder... y seleccionar UIII_Hotel_0743.
-
-3. Abrir terminal integrado en VS Code
-
-En VS Code: menú Terminal > New Terminal
-o atajo: `Ctrl + `` (control + backtick) en Windows/macOS.
-
-4. Crear carpeta entorno virtual .venv desde terminal de VS Code
-
-En la terminal integrada, ejecutar:
-
-Windows (PowerShell):
-
+### 1.4 Crear entorno virtual
+```bash
 python -m venv .venv
+```
 
-
-macOS / Linux:
-
-python3 -m venv .venv
-
-
-Esto crea la carpeta .venv dentro de UIII_Hotel_0743.
-
-5. Activar el entorno virtual
-
-Windows (PowerShell):
-
-# Si PowerShell bloquea la ejecución, ejecutar: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser (solo si sabes lo que haces)
-.venv\Scripts\Activate.ps1
-# O con cmd:
+### 1.5 Activar entorno virtual
+**Windows:**
+```bash
 .venv\Scripts\activate
+```
 
-
-macOS / Linux:
-
+**Mac/Linux:**
+```bash
 source .venv/bin/activate
+```
 
+### 1.6 Activar intérprete de Python
+- `Ctrl + Shift + P` → "Python: Select Interpreter"
+- Elegir el del entorno virtual: `./.venv/Scripts/python.exe`
 
-Al activarse verás (.venv) al inicio del prompt.
-
-6. Activar intérprete de Python en VS Code
-
-En VS Code: Ctrl+Shift+P → escribir Python: Select Interpreter → elegir el intérprete que apunta a .../UIII_Hotel_0743/.venv/bin/python (o Scripts\python.exe en Windows).
-Esto asegura que VS Code use el .venv.
-
-7. Instalar Django
-
-Con el entorno activado:
-
-pip install --upgrade pip
+### 1.7 Instalar Django
+```bash
 pip install django
+```
 
-
-Comprobar versión:
-
-python -m django --version
-
-8. Crear proyecto backend_Hotel sin duplicar carpeta
-
-Para que manage.py quede en la raíz UIII_Hotel_0743 y la carpeta del proyecto se llame backend_Hotel, ejecuta:
-
+### 1.8 Crear proyecto Django
+```bash
 django-admin startproject backend_Hotel .
+```
 
-
-Nota: el punto (.) al final crea los archivos en la carpeta actual sin crear una carpeta extra.
-
-Estructura resultante mínima:
-
-UIII_Hotel_0743/
-  .venv/
-  manage.py
-  backend_Hotel/
-    __init__.py
-    settings.py
-    urls.py
-    wsgi.py
-    asgi.py
-
-9. Ejecutar servidor en el puerto 8036
-
-Para ejecución local:
-
-python manage.py runserver 8036
-
-
-o para permitir acceso desde otras máquinas:
-
-python manage.py runserver 0.0.0.0:8036
-
-10. Copiar y pegar el link en el navegador
-
-Abre tu navegador y pega:
-
-http://127.0.0.1:8036/
-
-
-ó
-
-http://localhost:8036/
-
-11. Crear aplicación app_Hotel
-
-Con el entorno activado y en la raíz:
-
+### 1.9 Crear aplicación
+```bash
 python manage.py startapp app_Hotel
+```
 
+## 2. Configuración del proyecto
 
-Estructura ahora:
-
-UIII_Hotel_0743/
-  app_Hotel/
-    migrations/
-    __init__.py
-    admin.py
-    apps.py
-    models.py
-    views.py
-    tests.py
-    apps.py
-    ...
-
-12. Aquí el modelo models.py
-
-Ya diste el código; colócalo en app_Hotel/models.py. Te lo repito tal cual (pegalo en ese archivo):
-
-from django.db import models
-
-# ==========================================
-# MODELO: HUESPED
-# ==========================================
-class Huesped(models.Model):
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    telefono = models.CharField(max_length=20)
-    fecha_nacimiento = models.DateField()
-    direccion = models.CharField(max_length=200)
-    def __str__(self):
-        return self.nombre
-
-# ==========================================
-# MODELO: HABITACION
-# ==========================================
-class Habitacion(models.Model):
-    numero = models.IntegerField(unique=True)
-    tipo = models.CharField(max_length=50)
-    precio = models.DecimalField(max_digits=8, decimal_places=2)
-    descripcion = models.TextField()
-    estado = models.CharField(max_length=50)
-    piso = models.IntegerField()
-    def __str__(self):
-        return f"Habitación {self.numero}"
-
-# ==========================================
-# MODELO: RESERVA
-# ==========================================
-class Reserva(models.Model):
-    fecha_inicio = models.DateField()
-    fecha_fin = models.DateField()
-    fecha_reserva = models.DateField(auto_now_add=True)
-    estado = models.CharField(max_length=50)
-    huesped = models.ForeignKey(Huesped, on_delete=models.CASCADE)
-    habitaciones = models.ManyToManyField(Habitacion, through='ReservaHabitacion')
-    def __str__(self):
-        return f"Reserva {self.id}"
-
-# ==========================================
-# TABLA INTERMEDIA (7 CAMPOS)
-# ==========================================
-class ReservaHabitacion(models.Model):
-    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
-    habitacion = models.ForeignKey(Habitacion, on_delete=models.CASCADE)
-    precio = models.DecimalField(max_digits=8, decimal_places=2)
-    fecha_checkin = models.DateField()
-    fecha_checkout = models.DateField()
-    estatus = models.CharField(max_length=50)
-    def __str__(self):
-        return f"Reserva {self.reserva.id} - Habitación {self.habitacion.numero}"
-
-
-IMPORTANTE: Por ahora trabajaremos sólo con Huesped (según tu punto 27). Los otros modelos quedan pendientes.
-
-12.5 Procedimiento para realizar migraciones (makemigrations y migrate)
-
-Agrega la app a INSTALLED_APPS (ver punto 25).
-
-Ejecuta:
-
-python manage.py makemigrations app_Hotel
-python manage.py migrate
-
-13. Primero trabajamos con el MODELO: HUESPED
-
-Hecho: models.py tiene Huesped. Nos centraremos en vistas, templates y CRUD para Huesped.
-
-14. En views.py de app_Hotel crear las funciones
-
-Coloca el siguiente código en app_Hotel/views.py (funciones: inicio_hotel, agregar_huesped, actualizar_huesped, realizar_actualizacion_huesped, borrar_huesped):
-
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Huesped
-from django.urls import reverse
-
-def inicio_hotel(request):
-    # muestra página de inicio con información general
-    return render(request, 'inicio.html')
-
-def agregar_huesped(request):
-    if request.method == 'POST':
-        # sin validación, guardar directamente
-        nombre = request.POST.get('nombre', '')
-        apellido = request.POST.get('apellido', '')
-        email = request.POST.get('email', '')
-        telefono = request.POST.get('telefono', '')
-        fecha_nacimiento = request.POST.get('fecha_nacimiento', None)
-        direccion = request.POST.get('direccion', '')
-        Huesped.objects.create(
-            nombre=nombre,
-            apellido=apellido,
-            email=email,
-            telefono=telefono,
-            fecha_nacimiento=fecha_nacimiento,
-            direccion=direccion
-        )
-        return redirect('ver_huesped')
-    return render(request, 'huesped/agregar_huesped.html')
-
-def ver_huesped(request):
-    lista = Huesped.objects.all().order_by('id')
-    return render(request, 'huesped/ver_huesped.html', {'huespedes': lista})
-
-def actualizar_huesped(request, pk):
-    huesped = get_object_or_404(Huesped, pk=pk)
-    return render(request, 'huesped/actualizar_huesped.html', {'huesped': huesped})
-
-def realizar_actualizacion_huesped(request, pk):
-    huesped = get_object_or_404(Huesped, pk=pk)
-    if request.method == 'POST':
-        huesped.nombre = request.POST.get('nombre', huesped.nombre)
-        huesped.apellido = request.POST.get('apellido', huesped.apellido)
-        huesped.email = request.POST.get('email', huesped.email)
-        huesped.telefono = request.POST.get('telefono', huesped.telefono)
-        huesped.fecha_nacimiento = request.POST.get('fecha_nacimiento', huesped.fecha_nacimiento)
-        huesped.direccion = request.POST.get('direccion', huesped.direccion)
-        huesped.save()
-        return redirect('ver_huesped')
-    # si no es POST, redirigir a formulario de actualización
-    return redirect('actualizar_huesped', pk=pk)
-
-def borrar_huesped(request, pk):
-    huesped = get_object_or_404(Huesped, pk=pk)
-    if request.method == 'POST':
-        huesped.delete()
-        return redirect('ver_huesped')
-    return render(request, 'huesped/borrar_huesped.html', {'huesped': huesped})
-
-
-Observación: separé ver_huesped porque lo necesitas para listar.
-
-15. Crear la carpeta templates dentro de app_Hotel
-
-Estructura recomendada:
-
-app_Hotel/
-  templates/
-    base.html
-    header.html
-    navbar.html
-    footer.html
-    inicio.html
-    huesped/
-      agregar_huesped.html
-      ver_huesped.html
-      actualizar_huesped.html
-      borrar_huesped.html
-
-
-Crea la carpeta app_Hotel/templates y la subcarpeta huesped.
-
-16. Crear archivos HTML (base, header, navbar, footer, inicio)
-
-A continuación el contenido mínimo moderno y sencillo. Usa Bootstrap desde CDN.
-
-app_Hotel/templates/base.html
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Sistema Hotel{% endblock %}</title>
-    <!-- Bootstrap CSS (CDN) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-      /* Colores suaves y moderno */
-      body { background-color: #f7fafc; color: #0f172a; }
-      .header-brand { font-weight:700; color:#0b5ed7; }
-      footer { position: fixed; bottom: 0; left:0; right:0; background:#ffffffcc; padding:10px 0; border-top:1px solid #e6edf3; }
-      .content { padding-bottom:80px; } /* espacio para footer fijo */
-    </style>
-    {% block extra_head %}{% endblock %}
-  </head>
-  <body>
-    {% include 'navbar.html' %}
-    <div class="container content mt-4">
-      {% block content %}{% endblock %}
-    </div>
-
-    {% include 'footer.html' %}
-
-    <!-- Bootstrap JS (CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    {% block extra_js %}{% endblock %}
-  </body>
-</html>
-
-app_Hotel/templates/navbar.html
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-  <div class="container">
-    <a class="navbar-brand header-brand" href="{% url 'inicio' %}">Sistema de Administración Hotel</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'inicio' %}">Inicio</a></li>
-
-        <!-- Huésped -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="huespedMenu" role="button" data-bs-toggle="dropdown">
-            <i class="bi bi-people-fill"></i> Huésped
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'agregar_huesped' %}">Agregar huésped</a></li>
-            <li><a class="dropdown-item" href="{% url 'ver_huesped' %}">Ver huéspedes</a></li>
-          </ul>
-        </li>
-
-        <!-- Habitación -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="habMenu" role="button" data-bs-toggle="dropdown">
-            <i class="bi bi-door-closed-fill"></i> Habitación
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Agregar habitación</a></li>
-            <li><a class="dropdown-item" href="#">Ver habitaciones</a></li>
-          </ul>
-        </li>
-
-        <!-- Reservas -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="resMenu" role="button" data-bs-toggle="dropdown">
-            <i class="bi bi-calendar-check-fill"></i> Reservas
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Agregar reserva</a></li>
-            <li><a class="dropdown-item" href="#">Ver reservas</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<!-- Agregamos iconos Bootstrap Icons CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-
-Nota: pediste iconos solo en opciones principales (los puse junto a los textos).
-
-app_Hotel/templates/footer.html
-<footer class="text-center">
-  <div class="container">
-    <small>&copy; {{ now|"date:""%Y"" }} Sistema Hotel. Creado por Ing. Eliseo Nava, Cbtis 128. Todos los derechos reservados.</small>
-  </div>
-</footer>
-
-
-Para que now funcione en template, puedes activar el contexto o usar {% now "Y" %}. Si quieres que muestre fecha del sistema:
-
-<small>&copy; {% now "Y" %} Sistema Hotel. Creado por Ing. Eliseo Nava, Cbtis 128.</small>
-
-app_Hotel/templates/inicio.html
-{% extends 'base.html' %}
-{% block title %}Inicio - Sistema Hotel{% endblock %}
-{% block content %}
-<div class="row">
-  <div class="col-md-7">
-    <h1>Bienvenido al Sistema de Administración Hotel</h1>
-    <p class="lead">Gestión sencilla de huéspedes, habitaciones y reservas.</p>
-    <p>Usa el menú para navegar por las operaciones del sistema.</p>
-  </div>
-  <div class="col-md-5">
-    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=..." alt="Hotel" class="img-fluid rounded shadow-sm">
-  </div>
-</div>
-{% endblock %}
-
-
-La imagen la tomé de la red (Unsplash). Puedes reemplazar la URL por otra.
-
-21. Crear subcarpeta huesped dentro de app_Hotel/templates
-
-Ya incluida en la estructura: app_Hotel/templates/huesped/
-
-22. Crear archivos HTML para huesped (agregar, ver, actualizar, borrar)
-app_Hotel/templates/huesped/agregar_huesped.html
-{% extends 'base.html' %}
-{% block title %}Agregar Huésped{% endblock %}
-{% block content %}
-<div class="card p-3 shadow-sm">
-  <h4>Agregar Huésped</h4>
-  <form method="post">
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-md-6 mb-2"><input name="nombre" placeholder="Nombre" class="form-control"></div>
-      <div class="col-md-6 mb-2"><input name="apellido" placeholder="Apellido" class="form-control"></div>
-      <div class="col-md-6 mb-2"><input name="email" placeholder="Email" class="form-control" type="email"></div>
-      <div class="col-md-6 mb-2"><input name="telefono" placeholder="Teléfono" class="form-control"></div>
-      <div class="col-md-6 mb-2"><input name="fecha_nacimiento" placeholder="Fecha de nacimiento" class="form-control" type="date"></div>
-      <div class="col-md-6 mb-2"><input name="direccion" placeholder="Dirección" class="form-control"></div>
-    </div>
-    <button class="btn btn-primary mt-2">Guardar</button>
-    <a href="{% url 'ver_huesped' %}" class="btn btn-secondary mt-2">Cancelar</a>
-  </form>
-</div>
-{% endblock %}
-
-app_Hotel/templates/huesped/ver_huesped.html
-{% extends 'base.html' %}
-{% block title %}Ver Huéspedes{% endblock %}
-{% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h4>Lista de Huéspedes</h4>
-  <a href="{% url 'agregar_huesped' %}" class="btn btn-success">+ Agregar</a>
-</div>
-
-<table class="table table-striped table-hover bg-white shadow-sm">
-  <thead class="table-light">
-    <tr>
-      <th>#</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Teléfono</th><th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for h in huespedes %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      <td>{{ h.nombre }}</td>
-      <td>{{ h.apellido }}</td>
-      <td>{{ h.email }}</td>
-      <td>{{ h.telefono }}</td>
-      <td>
-        <a href="{% url 'actualizar_huesped' h.id %}" class="btn btn-sm btn-warning">Editar</a>
-        <a href="{% url 'borrar_huesped' h.id %}" class="btn btn-sm btn-danger">Borrar</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="6">No hay huéspedes.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endblock %}
-
-app_Hotel/templates/huesped/actualizar_huesped.html
-{% extends 'base.html' %}
-{% block title %}Actualizar Huésped{% endblock %}
-{% block content %}
-<div class="card p-3 shadow-sm">
-  <h4>Actualizar Huésped</h4>
-  <form method="post" action="{% url 'realizar_actualizacion_huesped' huesped.id %}">
-    {% csrf_token %}
-    <div class="row">
-      <div class="col-md-6 mb-2"><input name="nombre" value="{{ huesped.nombre }}" class="form-control"></div>
-      <div class="col-md-6 mb-2"><input name="apellido" value="{{ huesped.apellido }}" class="form-control"></div>
-      <div class="col-md-6 mb-2"><input name="email" value="{{ huesped.email }}" class="form-control" type="email"></div>
-      <div class="col-md-6 mb-2"><input name="telefono" value="{{ huesped.telefono }}" class="form-control"></div>
-      <div class="col-md-6 mb-2"><input name="fecha_nacimiento" value="{{ huesped.fecha_nacimiento }}" class="form-control" type="date"></div>
-      <div class="col-md-6 mb-2"><input name="direccion" value="{{ huesped.direccion }}" class="form-control"></div>
-    </div>
-    <button class="btn btn-primary mt-2">Guardar cambios</button>
-    <a href="{% url 'ver_huesped' %}" class="btn btn-secondary mt-2">Cancelar</a>
-  </form>
-</div>
-{% endblock %}
-
-app_Hotel/templates/huesped/borrar_huesped.html
-{% extends 'base.html' %}
-{% block title %}Borrar Huésped{% endblock %}
-{% block content %}
-<div class="card p-3 shadow-sm">
-  <h4>¿Eliminar huésped?</h4>
-  <p>Confirma eliminar a <strong>{{ huesped.nombre }} {{ huesped.apellido }}</strong></p>
-  <form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-    <a href="{% url 'ver_huesped' %}" class="btn btn-secondary">Cancelar</a>
-  </form>
-</div>
-{% endblock %}
-
-
-Punto 23: no usamos forms.py, utilizamos formularios HTML directos.
-
-24. Procedimiento para crear urls.py en app_Hotel
-
-Crea app_Hotel/urls.py con este contenido:
-
-from django.urls import path
-from . import views
-
-urlpatterns = [
-    path('', views.inicio_hotel, name='inicio'),
-    # Huesped CRUD
-    path('huesped/agregar/', views.agregar_huesped, name='agregar_huesped'),
-    path('huesped/ver/', views.ver_huesped, name='ver_huesped'),
-    path('huesped/actualizar/<int:pk>/', views.actualizar_huesped, name='actualizar_huesped'),
-    path('huesped/actualizar/realizar/<int:pk>/', views.realizar_actualizacion_huesped, name='realizar_actualizacion_huesped'),
-    path('huesped/borrar/<int:pk>/', views.borrar_huesped, name='borrar_huesped'),
-]
-
-25. Agregar app_Hotel en settings.py de backend_Hotel
-
-Editar backend_Hotel/settings.py y en INSTALLED_APPS agregar 'app_Hotel', por ejemplo:
+### 2.1 settings.py - Agregar aplicación
+```python
+# backend_Hotel/settings.py
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -545,122 +67,582 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'app_Hotel',  # <-- agrega aquí
+    'app_Hotel',  # Agregar esta línea
 ]
+```
 
+### 2.2 models.py - Modelos completos
+```python
+# app_Hotel/models.py
+from django.db import models
 
-No es necesario modificar TEMPLATES si usas templates dentro de la app; Django detecta app/templates.
+class Huesped(models.Model):
+    nombre = models.CharField(max_length=100)
+    apellido = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    telefono = models.CharField(max_length=20)
+    fecha_nacimiento = models.DateField()
+    direccion = models.CharField(max_length=200)
+    
+    def __str__(self):
+        return f"{self.nombre} {self.apellido}"
 
-26. Configurar urls.py de backend_Hotel para enlazar con app_Hotel
+class Habitacion(models.Model):
+    numero = models.IntegerField(unique=True)
+    tipo = models.CharField(max_length=50)
+    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    descripcion = models.TextField()
+    estado = models.CharField(max_length=50)
+    piso = models.IntegerField()
+    
+    def __str__(self):
+        return f"Habitación {self.numero}"
 
-Editar backend_Hotel/urls.py para incluir las urls de la app:
+class Reserva(models.Model):
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    fecha_reserva = models.DateField(auto_now_add=True)
+    estado = models.CharField(max_length=50)
+    huesped = models.ForeignKey(Huesped, on_delete=models.CASCADE)
+    habitaciones = models.ManyToManyField(Habitacion, through='ReservaHabitacion')
+    
+    def __str__(self):
+        return f"Reserva {self.id} - {self.huesped}"
 
+class ReservaHabitacion(models.Model):
+    reserva = models.ForeignKey(Reserva, on_delete=models.CASCADE)
+    habitacion = models.ForeignKey(Habitacion, on_delete=models.CASCADE)
+    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    fecha_checkin = models.DateField()
+    fecha_checkout = models.DateField()
+    estatus = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return f"Reserva {self.reserva.id} - Habitación {self.habitacion.numero}"
+```
+
+### 2.3 admin.py - Registrar modelos
+```python
+# app_Hotel/admin.py
+from django.contrib import admin
+from .models import Huesped, Habitacion, Reserva, ReservaHabitacion
+
+admin.site.register(Huesped)
+admin.site.register(Habitacion)
+admin.site.register(Reserva)
+admin.site.register(ReservaHabitacion)
+```
+
+### 2.4 Migraciones
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+## 3. Views para Huésped
+
+### 3.1 views.py
+```python
+# app_Hotel/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Huesped
+from django.http import HttpResponse
+
+def inicio_hotel(request):
+    return render(request, 'inicio.html')
+
+# HUÉSPED - CRUD
+def agregar_huesped(request):
+    if request.method == 'POST':
+        huesped = Huesped(
+            nombre=request.POST['nombre'],
+            apellido=request.POST['apellido'],
+            email=request.POST['email'],
+            telefono=request.POST['telefono'],
+            fecha_nacimiento=request.POST['fecha_nacimiento'],
+            direccion=request.POST['direccion']
+        )
+        huesped.save()
+        return redirect('ver_huespedes')
+    
+    return render(request, 'huesped/agregar_huesped.html')
+
+def ver_huespedes(request):
+    huespedes = Huesped.objects.all()
+    return render(request, 'huesped/ver_huesped.html', {'huespedes': huespedes})
+
+def actualizar_huesped(request, id):
+    huesped = get_object_or_404(Huesped, id=id)
+    
+    if request.method == 'POST':
+        return realizar_actualizacion_huesped(request, id)
+    
+    return render(request, 'huesped/actualizar_huesped.html', {'huesped': huesped})
+
+def realizar_actualizacion_huesped(request, id):
+    huesped = get_object_or_404(Huesped, id=id)
+    
+    huesped.nombre = request.POST['nombre']
+    huesped.apellido = request.POST['apellido']
+    huesped.email = request.POST['email']
+    huesped.telefono = request.POST['telefono']
+    huesped.fecha_nacimiento = request.POST['fecha_nacimiento']
+    huesped.direccion = request.POST['direccion']
+    
+    huesped.save()
+    return redirect('ver_huespedes')
+
+def borrar_huesped(request, id):
+    huesped = get_object_or_404(Huesped, id=id)
+    
+    if request.method == 'POST':
+        huesped.delete()
+        return redirect('ver_huespedes')
+    
+    return render(request, 'huesped/borrar_huesped.html', {'huesped': huesped})
+```
+
+## 4. URLs
+
+### 4.1 app_Hotel/urls.py
+```python
+# app_Hotel/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.inicio_hotel, name='inicio_hotel'),
+    
+    # Huésped URLs
+    path('huesped/agregar/', views.agregar_huesped, name='agregar_huesped'),
+    path('huesped/ver/', views.ver_huespedes, name='ver_huespedes'),
+    path('huesped/actualizar/<int:id>/', views.actualizar_huesped, name='actualizar_huesped'),
+    path('huesped/borrar/<int:id>/', views.borrar_huesped, name='borrar_huesped'),
+]
+```
+
+### 4.2 backend_Hotel/urls.py
+```python
+# backend_Hotel/urls.py
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('app_Hotel.urls')),  # la app maneja la raíz
+    path('', include('app_Hotel.urls')),
 ]
+```
 
-27. Registrar modelos en admin.py y volver a realizar migraciones
+## 5. Templates
 
-En app_Hotel/admin.py:
+### 5.1 Estructura de carpetas
+```
+app_Hotel/
+    templates/
+        base.html
+        header.html
+        navbar.html
+        footer.html
+        inicio.html
+        huesped/
+            agregar_huesped.html
+            ver_huesped.html
+            actualizar_huesped.html
+            borrar_huesped.html
+```
 
-from django.contrib import admin
-from .models import Huesped  # sólo Huesped por ahora
+### 5.2 base.html
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Hotel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #2c3e50 !important;
+        }
+        .main-content {
+            min-height: calc(100vh - 120px);
+            padding: 20px 0;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    {% include 'navbar.html' %}
+    
+    <div class="container main-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    
+    {% include 'footer.html' %}
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+```
 
-@admin.register(Huesped)
-class HuespedAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre', 'apellido', 'email', 'telefono')
-    search_fields = ('nombre', 'apellido', 'email')
+### 5.3 header.html
+```html
+<header class="bg-light py-3">
+    <div class="container">
+        <h1 class="text-center mb-0">🏨 Sistema de Administración Hotel</h1>
+    </div>
+</header>
+```
 
+### 5.4 navbar.html
+```html
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'inicio_hotel' %}">
+            🏨 Hotel CBTIS 128
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'inicio_hotel' %}">
+                        🏠 Inicio
+                    </a>
+                </li>
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        👥 Huésped
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'agregar_huesped' %}">Agregar huésped</a></li>
+                        <li><a class="dropdown-item" href="{% url 'ver_huespedes' %}">Ver huéspedes</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        🛏️ Habitación
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Agregar habitación</a></li>
+                        <li><a class="dropdown-item" href="#">Ver habitaciones</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        📅 Reservas
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Agregar reserva</a></li>
+                        <li><a class="dropdown-item" href="#">Ver reservas</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+```
 
-Luego:
+### 5.5 footer.html
+```html
+<footer class="bg-dark text-white text-center py-3 mt-5">
+    <div class="container">
+        <p class="mb-1">&copy; 2024 Sistema de Administración Hotel - Todos los derechos reservados</p>
+        <p class="mb-1">Fecha del sistema: {% now "d/m/Y" %}</p>
+        <p class="mb-0">Creado por Ing. Eliseo Nava, Cbtis 128</p>
+    </div>
+</footer>
+```
 
-python manage.py makemigrations app_Hotel
-python manage.py migrate
+### 5.6 inicio.html
+```html
+{% extends 'base.html' %}
 
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Bienvenido al Sistema Hotel</h2>
+                <p class="card-text">
+                    Sistema de administración hotelera desarrollado con Django para la gestión 
+                    eficiente de huéspedes, habitaciones y reservas.
+                </p>
+                <p class="card-text">
+                    Características principales:
+                </p>
+                <ul>
+                    <li>Gestión completa de huéspedes</li>
+                    <li>Control de habitaciones</li>
+                    <li>Sistema de reservas</li>
+                    <li>Interfaz moderna y responsive</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                     alt="Hotel" class="img-fluid rounded" style="max-height: 400px;">
+                <p class="mt-3 text-muted">Imagen representativa de instalaciones hoteleras</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
 
-Crea un superusuario si quieres acceder al admin:
+## 6. Templates de Huésped
 
+### 6.1 agregar_huesped.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">➕ Agregar Nuevo Huésped</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" name="nombre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" name="apellido" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" name="telefono" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" name="fecha_nacimiento" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Dirección</label>
+                        <textarea class="form-control" name="direccion" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Guardar Huésped</button>
+                        <a href="{% url 'ver_huespedes' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
+
+### 6.2 ver_huesped.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">👥 Lista de Huéspedes</h4>
+        <a href="{% url 'agregar_huesped' %}" class="btn btn-light">➕ Agregar Huésped</a>
+    </div>
+    <div class="card-body">
+        {% if huespedes %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for huesped in huespedes %}
+                    <tr>
+                        <td>{{ huesped.id }}</td>
+                        <td>{{ huesped.nombre }}</td>
+                        <td>{{ huesped.apellido }}</td>
+                        <td>{{ huesped.email }}</td>
+                        <td>{{ huesped.telefono }}</td>
+                        <td>
+                            <a href="{% url 'actualizar_huesped' huesped.id %}" class="btn btn-warning btn-sm">✏️ Editar</a>
+                            <a href="{% url 'borrar_huesped' huesped.id %}" class="btn btn-danger btn-sm">🗑️ Borrar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            <h5>No hay huéspedes registrados</h5>
+            <p>Comienza agregando el primer huésped al sistema.</p>
+            <a href="{% url 'agregar_huesped' %}" class="btn btn-primary">Agregar Primer Huésped</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+```
+
+### 6.3 actualizar_huesped.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">✏️ Actualizar Huésped</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" name="nombre" value="{{ huesped.nombre }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" name="apellido" value="{{ huesped.apellido }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" value="{{ huesped.email }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" name="telefono" value="{{ huesped.telefono }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" name="fecha_nacimiento" value="{{ huesped.fecha_nacimiento|date:'Y-m-d' }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Dirección</label>
+                        <textarea class="form-control" name="direccion" rows="3" required>{{ huesped.direccion }}</textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning">Actualizar Huésped</button>
+                        <a href="{% url 'ver_huespedes' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
+
+### 6.4 borrar_huesped.html
+```html
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">🗑️ Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body text-center">
+                <h5>¿Estás seguro de que deseas eliminar al huésped?</h5>
+                <p class="lead">{{ huesped.nombre }} {{ huesped.apellido }}</p>
+                <p><strong>Email:</strong> {{ huesped.email }}</p>
+                <p><strong>Teléfono:</strong> {{ huesped.telefono }}</p>
+                
+                <form method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+                </form>
+                <a href="{% url 'ver_huespedes' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+```
+
+## 7. Ejecutar el proyecto
+
+### 7.1 Crear superusuario (opcional)
+```bash
 python manage.py createsuperuser
+```
 
-28. Diseño y colores
-
-Usé Bootstrap + estilos en base.html para colores suaves y moderno. El HTML es sencillo y limpio tal como pediste (páginas sencillas). No realicé validación de datos (punto 28).
-
-29. Al inicio crear la estructura completa de carpetas y archivos
-
-Resumen de la estructura final (recomendada):
-
-UIII_Hotel_0743/
-├─ .venv/
-├─ manage.py
-├─ backend_Hotel/
-│  ├─ __init__.py
-│  ├─ settings.py
-│  ├─ urls.py
-│  ├─ wsgi.py
-│  └─ asgi.py
-├─ app_Hotel/
-│  ├─ migrations/
-│  ├─ templates/
-│  │  ├─ base.html
-│  │  ├─ navbar.html
-│  │  ├─ footer.html
-│  │  ├─ inicio.html
-│  │  └─ huesped/
-│  │     ├─ agregar_huesped.html
-│  │     ├─ ver_huesped.html
-│  │     ├─ actualizar_huesped.html
-│  │     └─ borrar_huesped.html
-│  ├─ admin.py
-│  ├─ apps.py
-│  ├─ models.py
-│  ├─ urls.py
-│  └─ views.py
-
-30. Proyecto totalmente funcional (con HUESPED)
-
-Con los pasos anteriores deberías tener un sistema funcional para CRUD de huéspedes:
-
-http://127.0.0.1:8036/ → inicio
-
-http://127.0.0.1:8036/huesped/ver/ → lista de huéspedes
-
-http://127.0.0.1:8036/huesped/agregar/ → formulario para agregar
-
-editar y borrar funcionan vía botones en la tabla
-
-31. Finalmente ejecutar servidor en el puerto 8036
-
-Si no está ya corriendo:
-
+### 7.2 Ejecutar servidor en puerto 8036
+```bash
 python manage.py runserver 8036
+```
 
+### 7.3 Acceder al sistema
+- **Sistema principal:** http://localhost:8036
+- **Admin Django:** http://localhost:8036/admin
 
-Abrir: http://127.0.0.1:8036/ en el navegador. ¡Listo!
+## Comandos finales de verificación
 
-Resumen rápido de comandos clave (copiar/pegar)
-mkdir UIII_Hotel_0743
-cd UIII_Hotel_0743
-python -m venv .venv
-# activar:
-# Windows PowerShell:
-.venv\Scripts\Activate.ps1
-# mac/linux:
-source .venv/bin/activate
-
-pip install --upgrade pip
-pip install django
-
-django-admin startproject backend_Hotel .
-python manage.py startapp app_Hotel
-
-# editar archivos (models.py, views.py, templates, urls.py, admin.py, settings.py)
-python manage.py makemigrations app_Hotel
+```bash
+# Verificar que todo esté correcto
+python manage.py check
+python manage.py makemigrations
 python manage.py migrate
-python manage.py createsuperuser   # opcional
 python manage.py runserver 8036
+```
+
+El sistema estará completamente funcional para la gestión de huéspedes con una interfaz moderna y atractiva. Los modelos para habitaciones y reservas están definidos pero pendientes de implementar en las vistas.
