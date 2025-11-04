@@ -647,40 +647,115 @@ python manage.py runserver 8036
 
 El sistema estará completamente funcional para la gestión de huéspedes con una interfaz moderna y atractiva. Los modelos para habitaciones y reservas están definidos pero pendientes de implementar en las vistas.
 UIII_Hotel_0743/
+UIII_Hotel_0743/
+# Estructura de Carpetas del Proyecto Hotel Django
+
+```
+UIII_Hotel_0743/
 │
-├── .venv/                          # Entorno virtual (se crea con: python -m venv .venv)
+├── .venv/
 │
-├── backend_Hotel/                  # Proyecto principal Django
+├── backend_Hotel/
 │   ├── __init__.py
-│   ├── settings.py                 # Configuración del proyecto
-│   ├── urls.py                     # URLs principales
+│   ├── settings.py
+│   ├── urls.py
 │   ├── wsgi.py
 │   └── asgi.py
 │
-├── app_Hotel/                      # Aplicación principal
+├── app_Hotel/
+│   ├── migrations/
+│   │   └── __init__.py
+│   ├── templates/
+│   │   ├── huesped/
+│   │   │   ├── agregar_huesped.html
+│   │   │   ├── ver_huesped.html
+│   │   │   ├── actualizar_huesped.html
+│   │   │   └── borrar_huesped.html
+│   │   ├── base.html
+│   │   ├── header.html
+│   │   ├── navbar.html
+│   │   ├── footer.html
+│   │   └── inicio.html
 │   ├── __init__.py
-│   ├── admin.py                    # Registro de modelos en admin
+│   ├── admin.py
 │   ├── apps.py
-│   ├── models.py                   # Modelos: Huesped, Habitacion, Reserva, ReservaHabitacion
+│   ├── models.py
 │   ├── tests.py
-│   ├── views.py                    # Vistas para CRUD de huéspedes
-│   ├── urls.py                     # URLs de la aplicación
-│   │
-│   └── templates/                  # Carpeta de templates
-│       ├── base.html               # Template base con Bootstrap
-│       ├── header.html             # Encabezado del sistema
-│       ├── navbar.html             # Menú de navegación
-│       ├── footer.html             # Pie de página fijo
-│       ├── inicio.html             # Página de inicio
-│       │
-│       └── huesped/                # Subcarpeta para templates de huésped
-│           ├── agregar_huesped.html
-│           ├── ver_huesped.html    # Tabla con botones ver, editar, borrar
-│           ├── actualizar_huesped.html
-│           └── borrar_huesped.html
+│   ├── views.py
+│   └── urls.py
 │
-├── db.sqlite3                      # Base de datos (se crea automáticamente)
+├── db.sqlite3
 │
-├── manage.py                       # Script de administración de Django
-│
-└── requirements.txt                # Dependencias del proyecto (opcional)
+└── manage.py
+```
+
+## Comandos para crear toda la estructura:
+
+```bash
+# Crear carpeta principal
+mkdir UIII_Hotel_0743
+cd UIII_Hotel_0743
+
+# Crear entorno virtual
+python -m venv .venv
+
+# Activar entorno virtual (Windows)
+.venv\Scripts\activate
+
+# Instalar Django
+pip install django
+
+# Crear proyecto Django
+django-admin startproject backend_Hotel .
+
+# Crear aplicación
+python manage.py startapp app_Hotel
+
+# Crear carpetas de templates
+mkdir app_Hotel\templates
+mkdir app_Hotel\templates\huesped
+
+# Crear archivo de URLs de la aplicación
+type nul > app_Hotel\urls.py
+
+# Verificar estructura creada
+tree /f
+```
+
+## Estructura visual:
+
+```
+UIII_Hotel_0743/
+├── .venv/                          # ✅ Entorno virtual
+├── backend_Hotel/                  # ✅ Proyecto principal
+│   ├── __init__.py                 # ✅
+│   ├── settings.py                 # ✅ Configuración
+│   ├── urls.py                     # ✅ URLs principales  
+│   ├── wsgi.py                     # ✅
+│   └── asgi.py                     # ✅
+├── app_Hotel/                      # ✅ Aplicación
+│   ├── migrations/                 # ✅ Migraciones DB
+│   │   └── __init__.py             # ✅
+│   ├── templates/                  # ✅ Templates
+│   │   ├── huesped/                # ✅ Templates huésped
+│   │   │   ├── agregar_huesped.html # ✅
+│   │   │   ├── ver_huesped.html    # ✅
+│   │   │   ├── actualizar_huesped.html # ✅
+│   │   │   └── borrar_huesped.html # ✅
+│   │   ├── base.html               # ✅ Template base
+│   │   ├── header.html             # ✅ Encabezado
+│   │   ├── navbar.html             # ✅ Navegación
+│   │   ├── footer.html             # ✅ Pie de página
+│   │   └── inicio.html             # ✅ Página inicio
+│   ├── __init__.py                 # ✅
+│   ├── admin.py                    # ✅ Admin Django
+│   ├── apps.py                     # ✅ Config app
+│   ├── models.py                   # ✅ Modelos DB
+│   ├── tests.py                    # ✅ Pruebas
+│   ├── views.py                    # ✅ Vistas
+│   └── urls.py                     # ✅ URLs app
+├── db.sqlite3                      # ✅ Base de datos
+└── manage.py                       # ✅ Administración
+```
+
+**Nota:** Los archivos HTML se deben crear manualmente con el código proporcionado anteriormente. La estructura de carpetas está lista para un proyecto Django totalmente funcional.opcional)
