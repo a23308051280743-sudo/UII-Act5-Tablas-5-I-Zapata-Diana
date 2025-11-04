@@ -646,3 +646,41 @@ python manage.py runserver 8036
 ```
 
 El sistema estará completamente funcional para la gestión de huéspedes con una interfaz moderna y atractiva. Los modelos para habitaciones y reservas están definidos pero pendientes de implementar en las vistas.
+UIII_Hotel_0743/
+│
+├── .venv/                          # Entorno virtual (se crea con: python -m venv .venv)
+│
+├── backend_Hotel/                  # Proyecto principal Django
+│   ├── __init__.py
+│   ├── settings.py                 # Configuración del proyecto
+│   ├── urls.py                     # URLs principales
+│   ├── wsgi.py
+│   └── asgi.py
+│
+├── app_Hotel/                      # Aplicación principal
+│   ├── __init__.py
+│   ├── admin.py                    # Registro de modelos en admin
+│   ├── apps.py
+│   ├── models.py                   # Modelos: Huesped, Habitacion, Reserva, ReservaHabitacion
+│   ├── tests.py
+│   ├── views.py                    # Vistas para CRUD de huéspedes
+│   ├── urls.py                     # URLs de la aplicación
+│   │
+│   └── templates/                  # Carpeta de templates
+│       ├── base.html               # Template base con Bootstrap
+│       ├── header.html             # Encabezado del sistema
+│       ├── navbar.html             # Menú de navegación
+│       ├── footer.html             # Pie de página fijo
+│       ├── inicio.html             # Página de inicio
+│       │
+│       └── huesped/                # Subcarpeta para templates de huésped
+│           ├── agregar_huesped.html
+│           ├── ver_huesped.html    # Tabla con botones ver, editar, borrar
+│           ├── actualizar_huesped.html
+│           └── borrar_huesped.html
+│
+├── db.sqlite3                      # Base de datos (se crea automáticamente)
+│
+├── manage.py                       # Script de administración de Django
+│
+└── requirements.txt                # Dependencias del proyecto (opcional)
